@@ -1,0 +1,12 @@
+{
+  "name": "shardedmapview",
+  "version": "0.0.0",
+  "description": "Zoom slippy maps further in and out by sharding together many local configurations",
+  "main": "index.js",
+  "repository": "https://github.com/gimlids/shardedmapview",
+  "author": "David Stolarsky",
+  "license": "MIT",
+  "dependencies": {
+    "babel-preset-latest": "^6.24.1"
+  }
+}
