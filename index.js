@@ -2,13 +2,16 @@ import {ShardForGlobalView, Decimal} from './Shards';
 
 function ShardedMapView({setActiveShard, setActiveShardView, initialView}) {
 
-	console.log('initialized a ShardedMapView');
+	let activeShard;
 
 	const setView = view => {
-		setActiveShardView({
-			zoom: view.zoom,
-			center: view.center
-		});
+		const newShard = ShardForGlobalView(view);
+		if(!activeShard || !activeShard.isEqual(newShard)) {
+			activeShard = newShard;
+			setActiveShard(activeShard);
+			console.info('switched active shard');
+		}
+		setActiveShardView(activeShard.globalViewToShardView(view));
 	};
 
 	setActiveShard(ShardForGlobalView(initialView));

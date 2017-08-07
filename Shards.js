@@ -1,5 +1,7 @@
 
-import Decimal from 'decimal.js';
+import Decimal from './DecimalConfigured';
+
+import Bounds from './Bounds';
 
 const D = num => new Decimal(num);
 
@@ -39,10 +41,11 @@ const Shard = ({origin, zoom}) => ({
   zoom: () => zoom,
   origin: () => origin,
   localTileCoordToGlobalTileCoord: localTileCoord => ({
-    z: localTileCoord.z,
+    z: shardZoomToGlobalZoom(localTileCoord.z, Shard({origin, zoom})),
     y: D(localTileCoord.y),
     x: D(localTileCoord.x)
-  })
+  }),
+  globalViewToShardView: globalView => globalViewToShardView(globalView, Shard({origin, zoom}))
 });
 
 const shardCoordToGlobalCoord = (shardCoord, shard) => {
