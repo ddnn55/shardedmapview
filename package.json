@@ -7,6 +7,7 @@
   "author": "David Stolarsky",
   "license": "MIT",
   "dependencies": {
-    "babel-preset-latest": "^6.24.1"
+    "babel-preset-latest": "^6.24.1",
+    "decimal.js": "^7.2.3"
   }
 }

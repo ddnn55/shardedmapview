@@ -1,4 +1,6 @@
-function ShardedMapView({setActiveShard, setActiveShardView}) {
+import {ShardForGlobalView} from './Shards';
+
+function ShardedMapView({setActiveShard, setActiveShardView, initialView}) {
 
 	console.log('initialized a ShardedMapView');
 
@@ -9,7 +11,7 @@ function ShardedMapView({setActiveShard, setActiveShardView}) {
 		});
 	};
 
-	setActiveShard([0,0,0]);
+	setActiveShard(ShardForGlobalView(initialView));
 
 	const instance = {
 		setView
