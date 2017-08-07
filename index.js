@@ -1,4 +1,4 @@
-import {ShardForGlobalView} from './Shards';
+import {ShardForGlobalView, Decimal} from './Shards';
 
 function ShardedMapView({setActiveShard, setActiveShardView, initialView}) {
 
@@ -14,7 +14,8 @@ function ShardedMapView({setActiveShard, setActiveShardView, initialView}) {
 	setActiveShard(ShardForGlobalView(initialView));
 
 	const instance = {
-		setView
+		setView,
+		Decimal
 	};
 
 	return instance;

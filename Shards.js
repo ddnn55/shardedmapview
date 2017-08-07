@@ -38,7 +38,11 @@ const Shard = ({origin, zoom}) => ({
   ),
   zoom: () => zoom,
   origin: () => origin,
-  localTileCoordToGlobalTileCoord: localTileCoord => localTileCoord
+  localTileCoordToGlobalTileCoord: localTileCoord => ({
+    z: localTileCoord.z,
+    y: D(localTileCoord.y),
+    x: D(localTileCoord.x)
+  })
 });
 
 const shardCoordToGlobalCoord = (shardCoord, shard) => {
@@ -80,6 +84,6 @@ const globalZoomToShardZoom = (globalZoom, shard) => globalZoom - shard.zoom() +
 const shardZoomToGlobalZoom = (shardZoom, shard) => shardZoom - SHARD_ZOOM_PADDING + shard.zoom();
 
 
-export {ShardForGlobalView};
+export {ShardForGlobalView, Decimal};
 
 
