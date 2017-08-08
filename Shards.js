@@ -66,7 +66,7 @@ const Shard = ({origin, zoom}) => ({
     // TODO shard.origin() must figure in 👆 as well
 
     const localZoomShardSizeInTiles = Decimal.pow(2, localTileCoord.z - SHARD_ZOOM_PADDING);
-    const paddingTilesTopAndLeft = Math.pow(2, SHARD_ZOOM_PADDING + localTileCoord.z - 1);
+    const paddingTilesTopAndLeft = Math.pow(2, SHARD_ZOOM_PADDING + localTileCoord.z - SHARD_ZOOM_PADDING - 1);
 
     const globalY = shard.row().times(localZoomShardSizeInTiles).plus(localTileCoord.y - paddingTilesTopAndLeft);
     const globalX = shard.column().times(localZoomShardSizeInTiles).plus(localTileCoord.x - paddingTilesTopAndLeft);
