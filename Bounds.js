@@ -1,11 +1,11 @@
 
-import Decimal from './DecimalConfigured';
+const Decimal = require('./DecimalConfigured');
 
 const D = num => new Decimal(num);
 
 const pointToString = p => `${D(p.x).toString()}, ${D(p.y).toString()}`;
 
-export default function Bounds({left, right, top, bottom}) {
+module.exports = function Bounds({left, right, top, bottom}) {
 
 	function width() {
 		return D(right).minus(left);

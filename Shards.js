@@ -1,7 +1,7 @@
 
-import Decimal from './DecimalConfigured';
+const Decimal = require('./DecimalConfigured');
 
-import Bounds from './Bounds';
+const Bounds = require('./Bounds');
 
 const D = num => new Decimal(num);
 
@@ -124,6 +124,6 @@ const globalZoomToShardZoom = (globalZoom, shard) => globalZoom - shard.zoom() +
 const shardZoomToGlobalZoom = (shardZoom, shard) => shardZoom - SHARD_ZOOM_PADDING + shard.zoom();
 
 
-export {ShardForGlobalView, Decimal, ShardLocalBounds};
+module.exports = {ShardForGlobalView, Decimal, ShardLocalBounds};
 
 

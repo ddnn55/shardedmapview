@@ -1,5 +1,4 @@
-import {ShardForGlobalView, ShardLocalBounds} from './Shards';
-import Bounds from './Bounds';
+const {ShardForGlobalView, ShardLocalBounds} = require('./Shards');
 
 function ShardedMapView({setActiveShard, setActiveShardView, initialView, shardExtent}) {
 
@@ -42,6 +41,10 @@ function ShardedMapView({setActiveShard, setActiveShardView, initialView, shardE
 	return instance;
 }
 
-ShardedMapView.Bounds = Bounds;
+const Bounds = require('./Bounds');
+const DecimalConfigured = require('./DecimalConfigured');
 
-export default ShardedMapView;
+ShardedMapView.Bounds = Bounds;
+ShardedMapView.DecimalConfigured = DecimalConfigured;
+
+module.exports = ShardedMapView;

@@ -1,4 +1,4 @@
-import Decimal  from 'decimal.js';
+const Decimal = require('decimal.js').default;
 Decimal.set({precision: 200});
 
-export default Decimal;
+module.exports = Decimal;
