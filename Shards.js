@@ -8,8 +8,8 @@ const D = num => new Decimal(num);
 const GLOBAL_SIZE = 256;
 const SHARD_LOCAL_SIZE = GLOBAL_SIZE;
 
-const SHARD_ZOOM_PADDING = 2;
-const SHARD_ZOOM_SPAN = 6;
+const SHARD_ZOOM_PADDING = 6;
+const SHARD_ZOOM_SPAN = 24;
 
 const stepFloor = (value, step) => (
   D(step).times((D(value).dividedBy(step)).floor())
