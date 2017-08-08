@@ -81,11 +81,12 @@ const Shard = ({origin, zoom}) => ({
       x: globalX
     };
   },
-  globalViewToShardView: globalView => globalViewToShardView(globalView, Shard({origin, zoom}))
+  globalViewToShardView: globalView => globalViewToShardView(globalView, Shard({origin, zoom})),
+  localCoordToGlobalCoord: point => shardCoordToGlobalCoord(point, Shard({origin, zoom}))
 });
 
 const shardCoordToGlobalCoord = (shardCoord, shard) => {
-  return ShardLocalBounds.transformerTo(shard.globalBounds())(shardCoord);
+  return ShardInnerBounds.transformerTo(shard.globalBounds())(shardCoord);
 };
 
 const ShardForGlobalView = (globalView) => {

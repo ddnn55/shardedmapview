@@ -4,6 +4,7 @@ import Bounds from './Bounds';
 function ShardedMapView({setActiveShard, setActiveShardView, initialView, shardExtent}) {
 
 	const shardCoordToUserShardCoord = ShardLocalBounds.transformerTo(shardExtent);
+	const userShardCoordToShardCoord = shardExtent.transformerTo(ShardLocalBounds);
 
 	let activeShard;
 
@@ -26,10 +27,16 @@ function ShardedMapView({setActiveShard, setActiveShardView, initialView, shardE
 		});
 	};
 
-	setActiveShard(ShardForGlobalView(initialView));
+	// setActiveShard(ShardForGlobalView(initialView));
+	setView(initialView);
 
 	const instance = {
-		setView
+		setView,
+		activeShardCoordToGlobalCoord: point => {
+			const shardCoord = userShardCoordToShardCoord(point);
+			const userShardCoord = activeShard.localCoordToGlobalCoord(shardCoord);
+			return {x: userShardCoord.x.toString(), y: userShardCoord.y.toString()};
+		}
 	};
 
 	return instance;
