@@ -1,6 +1,9 @@
-import {ShardForGlobalView, Decimal} from './Shards';
+import {ShardForGlobalView, ShardLocalBounds} from './Shards';
+import Bounds from './Bounds';
 
-function ShardedMapView({setActiveShard, setActiveShardView, initialView}) {
+function ShardedMapView({setActiveShard, setActiveShardView, initialView, shardExtent}) {
+
+	const shardCoordToUserShardCoord = ShardLocalBounds.transformerTo(shardExtent);
 
 	let activeShard;
 
@@ -9,19 +12,28 @@ function ShardedMapView({setActiveShard, setActiveShardView, initialView}) {
 		if(!activeShard || !activeShard.isEqual(newShard)) {
 			activeShard = newShard;
 			setActiveShard(activeShard);
-			console.info('switched active shard');
+			console.info('switched to shard w/ zoom ' + activeShard.zoom());
 		}
-		setActiveShardView(activeShard.globalViewToShardView(view));
+		const intermediateShardView = activeShard.globalViewToShardView(view);
+		const userShardView = shardCoordToUserShardCoord(intermediateShardView.center);
+		setActiveShardView({
+			zoom: intermediateShardView.zoom,
+			center: {
+				x: userShardView.x.toNumber(),
+				y: userShardView.y.toNumber()
+			}
+		});
 	};
 
 	setActiveShard(ShardForGlobalView(initialView));
 
 	const instance = {
-		setView,
-		Decimal
+		setView
 	};
 
 	return instance;
 }
+
+ShardedMapView.Bounds = Bounds;
 
 export default ShardedMapView;

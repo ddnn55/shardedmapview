@@ -8,17 +8,28 @@ const D = num => new Decimal(num);
 const GLOBAL_SIZE = 256;
 const SHARD_LOCAL_SIZE = GLOBAL_SIZE;
 
-const SHARD_ZOOM_PADDING = 8;
-const SHARD_ZOOM_SPAN = 32;
+const SHARD_ZOOM_PADDING = 0;
+const SHARD_ZOOM_SPAN = 6;
 
 const stepFloor = (value, step) => (
   D(step).times((D(value).dividedBy(step)).floor())
 );
 
+const stepRound = (value, step) => (
+  step * Math.round(value / step)
+);
+
 const shardSizeAtZoom = zoom => D(GLOBAL_SIZE).dividedBy(D(2).toPower(zoom));
 
 
+const pointToString = p => `${D(p.x).toString()}, ${D(p.y).toString()}`;
 
+const ShardLocalBounds = Bounds({
+  left: 0,
+  right: SHARD_LOCAL_SIZE,
+  top: 0,
+  bottom: SHARD_LOCAL_SIZE
+});
 
 const Shard = ({origin, zoom}) => ({
   globalBounds: () => Bounds({
@@ -27,12 +38,9 @@ const Shard = ({origin, zoom}) => ({
     top: origin.y,
     bottom: origin.y.plus(shardSizeAtZoom(zoom))
   }),
-  localBounds: () => Bounds({
-    left: 0,
-    right: SHARD_LOCAL_SIZE,
-    top: 0,
-    bottom: SHARD_LOCAL_SIZE
-  }),
+  localBounds: () => {
+    throw new Error('Removed Shard.localBounds(). Use Shards.ShardLocalBounds');
+  },
   isEqual: otherShard => (
     zoom === otherShard.zoom() &&
     origin.x.equals(otherShard.origin().x) &&
@@ -40,20 +48,45 @@ const Shard = ({origin, zoom}) => ({
   ),
   zoom: () => zoom,
   origin: () => origin,
-  localTileCoordToGlobalTileCoord: localTileCoord => ({
-    z: shardZoomToGlobalZoom(localTileCoord.z, Shard({origin, zoom})),
-    y: D(localTileCoord.y),
-    x: D(localTileCoord.x)
-  }),
+  row: () => origin.y.dividedBy(shardSizeAtZoom(zoom)),
+  column: () => origin.x.dividedBy(shardSizeAtZoom(zoom)),
+  localTileCoordToGlobalTileCoord: localTileCoord => {
+    const shard = Shard({origin, zoom})
+    // const globalZoom = shardZoomToGlobalZoom(localTileCoord.z, shard);
+    // console.log({shardOrigin: pointToString(shard.origin()), shardZoom: shard.zoom()});
+    // const shardSize = shardSizeAtZoom(zoom);
+    // const globalY = Decimal.pow(2, globalZoom)//.times(-1)//.minus(Decimal.pow(2, shard.zoom() + localTileCoord.z));
+    // TODO shard.origin() must figure in 👆 as well
+
+    const localZoomShardSizeInTiles = Decimal.pow(2, localTileCoord.z);
+
+    const globalY = shard.row().times(localZoomShardSizeInTiles).plus(localTileCoord.y);
+    const globalX = shard.column().times(localZoomShardSizeInTiles).plus(localTileCoord.x);
+
+    const globalZ = shardZoomToGlobalZoom(localTileCoord.z, shard);
+
+    console.info(`shard: ${zoom}, ${shard.row()}, ${shard.column()}; local: ${localTileCoord.z}, ${localTileCoord.y}, ${localTileCoord.x}; global: ${globalZ}, ${globalY}, ${globalX}`);
+
+    return {
+      z: globalZ,
+      y: globalY,
+      x: globalX
+    };
+  },
   globalViewToShardView: globalView => globalViewToShardView(globalView, Shard({origin, zoom}))
 });
 
+const shardTileRowToGlobalTileRow = (shardTileRow, shard) => {
+  return D(shardTileRow);
+};
+
 const shardCoordToGlobalCoord = (shardCoord, shard) => {
-  return shard.localBounds().transformerTo(shard.globalBounds())(shardCoord);
+  return ShardLocalBounds.transformerTo(shard.globalBounds())(shardCoord);
 };
 
 const ShardForGlobalView = (globalView) => {
   const shardZoom = stepFloor(globalView.zoom, SHARD_ZOOM_SPAN).toNumber();
+  // const shardZoom = stepRound(globalView.zoom, SHARD_ZOOM_SPAN);
   return Shard({
     origin: {
       x: stepFloor(globalView.center.x, shardSizeAtZoom(shardZoom)),
@@ -65,8 +98,7 @@ const ShardForGlobalView = (globalView) => {
 
 const globalCoordToShardCoord = (globalCoord, shard) => {
   const globalBounds = shard.globalBounds();
-  const localBounds = shard.localBounds();
-  const transformedPoint = globalBounds.transformerTo(localBounds)(globalCoord);
+  const transformedPoint = globalBounds.transformerTo(ShardLocalBounds)(globalCoord);
   return {
     x: transformedPoint.x.toNumber(),
     y: transformedPoint.y.toNumber()
@@ -87,6 +119,6 @@ const globalZoomToShardZoom = (globalZoom, shard) => globalZoom - shard.zoom() +
 const shardZoomToGlobalZoom = (shardZoom, shard) => shardZoom - SHARD_ZOOM_PADDING + shard.zoom();
 
 
-export {ShardForGlobalView, Decimal};
+export {ShardForGlobalView, Decimal, ShardLocalBounds};
 
 
