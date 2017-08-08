@@ -15,6 +15,7 @@ function ShardedMapView({setActiveShard, setActiveShardView, initialView, shardE
 			console.info('switched to shard w/ zoom ' + activeShard.zoom());
 		}
 		const intermediateShardView = activeShard.globalViewToShardView(view);
+		
 		const userShardView = shardCoordToUserShardCoord(intermediateShardView.center);
 		setActiveShardView({
 			zoom: intermediateShardView.zoom,

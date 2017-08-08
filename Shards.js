@@ -8,7 +8,7 @@ const D = num => new Decimal(num);
 const GLOBAL_SIZE = 256;
 const SHARD_LOCAL_SIZE = GLOBAL_SIZE;
 
-const SHARD_ZOOM_PADDING = 0;
+const SHARD_ZOOM_PADDING = 2;
 const SHARD_ZOOM_SPAN = 6;
 
 const stepFloor = (value, step) => (
@@ -29,6 +29,13 @@ const ShardLocalBounds = Bounds({
   right: SHARD_LOCAL_SIZE,
   top: 0,
   bottom: SHARD_LOCAL_SIZE
+});
+
+const ShardInnerBounds = Bounds({
+  left: SHARD_LOCAL_SIZE / 2,
+  top: SHARD_LOCAL_SIZE / 2,
+  right: SHARD_LOCAL_SIZE / 2 + SHARD_LOCAL_SIZE / Math.pow(2, SHARD_ZOOM_PADDING),
+  bottom: SHARD_LOCAL_SIZE / 2 + SHARD_LOCAL_SIZE / Math.pow(2, SHARD_ZOOM_PADDING)
 });
 
 const Shard = ({origin, zoom}) => ({
@@ -58,14 +65,15 @@ const Shard = ({origin, zoom}) => ({
     // const globalY = Decimal.pow(2, globalZoom)//.times(-1)//.minus(Decimal.pow(2, shard.zoom() + localTileCoord.z));
     // TODO shard.origin() must figure in 👆 as well
 
-    const localZoomShardSizeInTiles = Decimal.pow(2, localTileCoord.z);
+    const localZoomShardSizeInTiles = Decimal.pow(2, localTileCoord.z - SHARD_ZOOM_PADDING);
+    const paddingTilesTopAndLeft = Math.pow(2, SHARD_ZOOM_PADDING + localTileCoord.z - 1);
 
-    const globalY = shard.row().times(localZoomShardSizeInTiles).plus(localTileCoord.y);
-    const globalX = shard.column().times(localZoomShardSizeInTiles).plus(localTileCoord.x);
+    const globalY = shard.row().times(localZoomShardSizeInTiles).plus(localTileCoord.y - paddingTilesTopAndLeft);
+    const globalX = shard.column().times(localZoomShardSizeInTiles).plus(localTileCoord.x - paddingTilesTopAndLeft);
 
     const globalZ = shardZoomToGlobalZoom(localTileCoord.z, shard);
 
-    console.info(`shard: ${zoom}, ${shard.row()}, ${shard.column()}; local: ${localTileCoord.z}, ${localTileCoord.y}, ${localTileCoord.x}; global: ${globalZ}, ${globalY}, ${globalX}`);
+    // console.info(`shard: ${zoom}, ${shard.row()}, ${shard.column()}; local: ${localTileCoord.z}, ${localTileCoord.y}, ${localTileCoord.x}; global: ${globalZ}, ${globalY}, ${globalX}`);
 
     return {
       z: globalZ,
@@ -75,10 +83,6 @@ const Shard = ({origin, zoom}) => ({
   },
   globalViewToShardView: globalView => globalViewToShardView(globalView, Shard({origin, zoom}))
 });
-
-const shardTileRowToGlobalTileRow = (shardTileRow, shard) => {
-  return D(shardTileRow);
-};
 
 const shardCoordToGlobalCoord = (shardCoord, shard) => {
   return ShardLocalBounds.transformerTo(shard.globalBounds())(shardCoord);
@@ -98,7 +102,7 @@ const ShardForGlobalView = (globalView) => {
 
 const globalCoordToShardCoord = (globalCoord, shard) => {
   const globalBounds = shard.globalBounds();
-  const transformedPoint = globalBounds.transformerTo(ShardLocalBounds)(globalCoord);
+  const transformedPoint = globalBounds.transformerTo(ShardInnerBounds)(globalCoord);
   return {
     x: transformedPoint.x.toNumber(),
     y: transformedPoint.y.toNumber()
