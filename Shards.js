@@ -82,10 +82,10 @@ const Shard = ({origin, zoom}) => ({
     };
   },
   globalViewToShardView: globalView => globalViewToShardView(globalView, Shard({origin, zoom})),
-  localCoordToGlobalCoord: point => shardCoordToGlobalCoord(point, Shard({origin, zoom}))
+  localCoordToGlobalCoord: point => ShardCoordToGlobalCoord(point, Shard({origin, zoom}))
 });
 
-const shardCoordToGlobalCoord = (shardCoord, shard) => {
+const ShardCoordToGlobalCoord = (shardCoord, shard) => {
   return ShardInnerBounds.transformerTo(shard.globalBounds())(shardCoord);
 };
 
@@ -101,7 +101,7 @@ const ShardForGlobalView = (globalView) => {
   })
 };
 
-const globalCoordToShardCoord = (globalCoord, shard) => {
+const GlobalCoordToShardCoord = (globalCoord, shard) => {
   const globalBounds = shard.globalBounds();
   const transformedPoint = globalBounds.transformerTo(ShardInnerBounds)(globalCoord);
   return {
@@ -112,7 +112,7 @@ const globalCoordToShardCoord = (globalCoord, shard) => {
 
 const globalViewToShardView = (globalView, shard) => {
   const view = {
-    center: globalCoordToShardCoord(globalView.center, shard),
+    center: GlobalCoordToShardCoord(globalView.center, shard),
     zoom: globalZoomToShardZoom(globalView.zoom, shard)
   };
   // console.log('view', view);
@@ -124,6 +124,11 @@ const globalZoomToShardZoom = (globalZoom, shard) => globalZoom - shard.zoom() +
 const ShardZoomToGlobalZoom = (shardZoom, shard) => shardZoom - SHARD_ZOOM_PADDING + shard.zoom();
 
 
-module.exports = {ShardForGlobalView, Decimal, ShardLocalBounds, ShardZoomToGlobalZoom};
-
-
+module.exports = {
+  ShardForGlobalView,
+  Decimal,
+  ShardLocalBounds,
+  ShardZoomToGlobalZoom,
+  GlobalCoordToShardCoord,
+  ShardCoordToGlobalCoord
+};
