@@ -39,6 +39,7 @@ const ShardInnerBounds = Bounds({
 });
 
 const Shard = ({origin, zoom}) => ({
+  key: () => `${zoom},${origin.y.toString()},${origin.x.toString()}`,
   globalBounds: () => Bounds({
     left: origin.x,
     right: origin.x.plus(shardSizeAtZoom(zoom)),

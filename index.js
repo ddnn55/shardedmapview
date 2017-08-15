@@ -44,5 +44,6 @@ function ShardedMapView({setActiveShard, setActiveShardView, initialView, shardE
 ShardedMapView.Bounds = require('./Bounds');
 ShardedMapView.DecimalConfigured = require('./DecimalConfigured');
 ShardedMapView.Shards = require('./Shards');
+ShardedMapView.Tile = require('./Tile');
 
 module.exports = ShardedMapView;
