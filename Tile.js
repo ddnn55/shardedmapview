@@ -6,6 +6,7 @@ const D = num => new Decimal(num);
 function tileCoordForPointAtZoom(point, zoom) {
 	var factor = Decimal.pow(2, zoom - 8);
 	//var tileX = factor + (point.x - 1) * factor;
+	// console.error(factor, point.x);
 	var tileX = factor.times(point.x);
 	var tileY = factor.times(D(0).minus(point.y));
 	return {x: tileX, y: tileY, z: zoom};
@@ -55,17 +56,24 @@ Tile.tileForPointAtZoom = function(point, zoom) {
 Tile.tilesForBoundsAtZoom = function(bounds, zoom) {
 
 	var upperLeftTile = module.exports.tileForPointAtZoom(
-		{y: bounds.top, x: bounds.left}, zoom
+		{y: bounds.top || bounds.getTop(), x: bounds.left || bounds.getLeft()}, zoom
 	);
 	var lowerRightTile = module.exports.tileForPointAtZoom(
-		{y: bounds.bottom, x: bounds.right}, zoom
+		{y: bounds.bottom || bounds.getBottom(), x: bounds.right || bounds.getRight()}, zoom
 	);
 
+	console.error(`upper left tile:  ${upperLeftTile.key()}`);
+	console.error(`lower right tile: ${lowerRightTile.key()}`);
+	console.error(`--------------`);
+
+	let rowExtent    = [upperLeftTile.row, lowerRightTile.row].sort((a, b) => a.comparedTo(b));
+	let columnExtent = [upperLeftTile.column, lowerRightTile.column].sort((a, b) => a.comparedTo(b));
+
 	var tiles = [];
-	for(var r = upperLeftTile.row; r.lessThanOrEqualTo(lowerRightTile.row); r = r.plus(1)) {
-		for(var c = upperLeftTile.column; c.lessThanOrEqualTo(lowerRightTile.column); c = c.plus(1)) {
+	for(var r = rowExtent[0]; r.lessThanOrEqualTo(rowExtent[1]); r = r.plus(1)) {
+		for(var c = columnExtent[0]; c.lessThanOrEqualTo(columnExtent[1]); c = c.plus(1)) {
 			// (function(_r, _c) {
-				tiles.push(module.exports.Tile({
+				tiles.push(Tile({
 					row: r,
 					column: c,
 					zoom: zoom
