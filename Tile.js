@@ -62,9 +62,9 @@ Tile.tilesForBoundsAtZoom = function(bounds, zoom) {
 		{y: bounds.bottom || bounds.getBottom(), x: bounds.right || bounds.getRight()}, zoom
 	);
 
-	console.error(`upper left tile:  ${upperLeftTile.key()}`);
-	console.error(`lower right tile: ${lowerRightTile.key()}`);
-	console.error(`--------------`);
+	// console.error(`upper left tile:  ${upperLeftTile.key()}`);
+	// console.error(`lower right tile: ${lowerRightTile.key()}`);
+	// console.error(`--------------`);
 
 	let rowExtent    = [upperLeftTile.row, lowerRightTile.row].sort((a, b) => a.comparedTo(b));
 	let columnExtent = [upperLeftTile.column, lowerRightTile.column].sort((a, b) => a.comparedTo(b));
