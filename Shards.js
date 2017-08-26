@@ -93,7 +93,7 @@ const ShardCoordToGlobalCoord = (shardCoord, shard) => {
 };
 
 const ShardForGlobalView = (globalView) => {
-  const shardZoom = stepFloor(globalView.zoom, SHARD_ZOOM_SPAN).toNumber();
+  const shardZoom = stepFloor(globalView.zoom - 1, SHARD_ZOOM_SPAN).toNumber();
   // console.log({globalView, shardZoom});
   // const shardZoom = stepRound(globalView.zoom, SHARD_ZOOM_SPAN);
   return Shard({
