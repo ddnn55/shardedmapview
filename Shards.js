@@ -69,6 +69,8 @@ const Shard = ({origin, zoom}) => ({
     const localZoomShardSizeInTiles = Decimal.pow(2, localTileCoord.z - SHARD_ZOOM_PADDING);
     const paddingTilesTopAndLeft = Math.pow(2, SHARD_ZOOM_PADDING + localTileCoord.z - SHARD_ZOOM_PADDING - 1);
 
+    // console.info({paddingTilesTopAndLeft});
+
     const globalY = shard.row().times(localZoomShardSizeInTiles).plus(localTileCoord.y - paddingTilesTopAndLeft);
     const globalX = shard.column().times(localZoomShardSizeInTiles).plus(localTileCoord.x - paddingTilesTopAndLeft);
 
@@ -92,6 +94,7 @@ const ShardCoordToGlobalCoord = (shardCoord, shard) => {
 
 const ShardForGlobalView = (globalView) => {
   const shardZoom = stepFloor(globalView.zoom, SHARD_ZOOM_SPAN).toNumber();
+  // console.log({globalView, shardZoom});
   // const shardZoom = stepRound(globalView.zoom, SHARD_ZOOM_SPAN);
   return Shard({
     origin: {
