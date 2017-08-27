@@ -6,15 +6,17 @@ function ShardedMapView({setActiveShard, setActiveShardView, initialView, shardE
 	const userShardCoordToShardCoord = shardExtent.transformerTo(ShardLocalBounds);
 
 	let activeShard;
+	let view;
 
-	const setView = view => {
-		const newShard = ShardForGlobalView(view);
+	const setView = _view => {
+		view = _view;
+		const newShard = ShardForGlobalView(_view);
 		if(!activeShard || !activeShard.isEqual(newShard)) {
 			activeShard = newShard;
 			setActiveShard(activeShard);
 			console.info('switched to shard w/ zoom ' + activeShard.zoom());
 		}
-		const intermediateShardView = activeShard.globalViewToShardView(view);
+		const intermediateShardView = activeShard.globalViewToShardView(_view);
 		
 		const userShardView = shardCoordToUserShardCoord(intermediateShardView.center);
 		setActiveShardView({
@@ -35,7 +37,8 @@ function ShardedMapView({setActiveShard, setActiveShardView, initialView, shardE
 			const shardCoord = userShardCoordToShardCoord(point);
 			const userShardCoord = activeShard.localCoordToGlobalCoord(shardCoord);
 			return {x: userShardCoord.x.toString(), y: userShardCoord.y.toString()};
-		}
+		},
+		zoom: () => view.zoom
 	};
 
 	return instance;
